@@ -32,9 +32,32 @@
 # - Return this probability.
 
 sample.training.data <- data.frame(x=c(0.5,0.6), y=c(0.4,0.3), category=c(1,2))
+row.count <- max(rownames(sample.training.data))
+sample.training.data$weight <- 1*0.5^(as.numeric(row.count)-as.numeric(rownames(sample.training.data)))
+
+sample.training.data$distance <- mapply(function(x,y){
+  return(sqrt((x-1)^2 + (y-1)^2 ))
+}, sample.training.data$x, sample.training.data$y)
+
+sample.training.data$similarities <- exp(-5*sample.training.data$distance)
+sample.training.data$mem.sims <- sample.training.data$similarities * sample.training.data$weight
+pr.correct <- sum(subset(sample.training.data, category==1)$mem.sims) / sum(sample.training.data$mem.sims)
+print(pr.correct)
 
 exemplar.memory.limited <- function(training.data, x.val, y.val, target.category, sensitivity, decay.rate){
-  return(NA)
+  row.count <- max(rownames(training.data))
+  training.data$weight <- 1*decay.rate^(as.numeric(row.count)-as.numeric(rownames(training.data)))
+
+  training.data$distance <- mapply(function(x,y){
+    return(sqrt((x-x.val)^2 + (y-y.val)^2 ))
+  }, training.data$x, training.data$y)
+  
+  training.data$similarities <- exp(-sensitivity*training.data$distance)
+  training.data$mem.sims <- training.data$similarities * training.data$weight
+  
+  pr.correct <- sum(subset(training.data, category==target.category)$mem.sims) / sum(training.data$mem.sims)
+  
+  return(pr.correct)
 }
 
 # Once you have the model implemented, write the log-likelihood function for a set of data.
