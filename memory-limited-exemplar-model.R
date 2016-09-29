@@ -44,6 +44,7 @@ sample.training.data$mem.sims <- sample.training.data$similarities * sample.trai
 pr.correct <- sum(subset(sample.training.data, category==1)$mem.sims) / sum(sample.training.data$mem.sims)
 print(pr.correct)
 
+
 exemplar.memory.limited <- function(training.data, x.val, y.val, target.category, sensitivity, decay.rate){
   row.count <- max(rownames(training.data))
   training.data$weight <- 1*decay.rate^(as.numeric(row.count)-as.numeric(rownames(training.data)))
@@ -83,5 +84,32 @@ sample.data.set[4,]
 # Don't forget that decay rate should be between 0 and 1, and that sensitivity should be > 0.
 
 exemplar.memory.log.likelihood <- function(all.data, sensitivity, decay.rate){
-  return(NA)
+  # for each row in data, call the above function where training data is above and test stim is the row
+  # you're on. that gives you prob for that category with those params, get log likelihood for each prob,
+  # then sum them all together
+  
+  row.count <- as.numeric(max(rownames(all.data)))
+  
+  for(i in 1:row.count){
+    if(i==1) {
+      all.data$prob <- 0.5
+    }
+    if (i>1) {
+      train <- all.data[0:i-1,]
+      test <- all.data[i,]
+      all.data$prob <- exemplar.memory.limited(train, test$x, test$y, test$correct, sensitivity, decay.rate)
+      if(all.data$prob==0){
+        all.data$prob <- 0.000000000001
+      }
+    }
+  }
+  
+  all.data$likelihood <- mapply(function(x, y) {
+    if(x==TRUE) {return(y)}
+    if(x==FALSE) {return(1-y)}
+  }, all.data$correct.response, y=all.data$all.data.prob)
+  
+  log.likelihood <- sum(log(all.data$likelihood))
+  
+  return(log.likelihood)
 }
