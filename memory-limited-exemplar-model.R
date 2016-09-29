@@ -107,7 +107,7 @@ exemplar.memory.log.likelihood <- function(all.data, sensitivity, decay.rate){
   all.data$likelihood <- mapply(function(x, y) {
     if(x==TRUE) {return(y)}
     if(x==FALSE) {return(1-y)}
-  }, all.data$correct.response, y=all.data$all.data.prob)
+  }, x=all.data$correct, y=all.data$prob)
   
   log.likelihood <- sum(log(all.data$likelihood))
   
