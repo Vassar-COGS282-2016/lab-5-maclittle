@@ -42,8 +42,6 @@ sample.training.data$distance <- mapply(function(x,y){
 sample.training.data$similarities <- exp(-5*sample.training.data$distance)
 sample.training.data$mem.sims <- sample.training.data$similarities * sample.training.data$weight
 pr.correct <- sum(subset(sample.training.data, category==1)$mem.sims) / sum(sample.training.data$mem.sims)
-print(pr.correct)
-
 
 exemplar.memory.limited <- function(training.data, x.val, y.val, target.category, sensitivity, decay.rate){
   row.count <- max(rownames(training.data))
@@ -88,14 +86,16 @@ exemplar.memory.log.likelihood <- function(all.data, sensitivity, decay.rate){
   # you're on. that gives you prob for that category with those params, get log likelihood for each prob,
   # then sum them all together
   
+  # note: change into thing that only takes params as one list thing
+  
   row.count <- as.numeric(max(rownames(all.data)))
   
   for(i in 1:row.count){
     if(i==1) {
       all.data$prob <- 0.5
     }
-    if (i>1) {
-      train <- all.data[0:i-1,]
+    else {
+      train <- all.data[0:(i-1),]
       test <- all.data[i,]
       all.data$prob <- exemplar.memory.limited(train, test$x, test$y, test$correct, sensitivity, decay.rate)
       if(all.data$prob==0){
