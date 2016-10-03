@@ -31,30 +31,30 @@ print(fit.fixed$value)
 # What's the log likelihood of both models? (see the $value in the result of optiom(),
 # remember this is the negative log likeihood, so multiply by -1.
 
-# For the first model, the likelihood is 10610.31
-# For the second, the likelihood is also 10610.31
+# For the first model, the likelihood is 346.5736
+# For the second, the likelihood is also 346.5736
 
 # What's the AIC and BIC for both models? Which model should we prefer?
 
-aic.one <- (2*2) - (2*log(10610.31))
+aic.one <- (2*2) - (2*log(346.5736))
 print(aic.one)
 
 n <- as.numeric(max(rownames(all.data)))
-bic.one <- ((-2)*log(10610.31)) + (2*log(n))
+bic.one <- ((-2)*log(346.5736)) + (2*log(n))
 print(bic.one)
 
-aic.two <- (2*1) - (2*log(10610.21))
+aic.two <- (2*1) - (2*log(346.5736))
 print(aic.two)
 
-bic.two <- ((-2)*log(10610.31)) + (1*log(n))
+bic.two <- ((-2)*log(346.5736)) + (1*log(n))
 print(bic.two)
 
-# First model: AIC is -14.53916
-#              BIC is -9.348923
-# Second model: AIC is -16.53914
-#               BIC is -13.94404
+# First model: AIC is 7.69619
+#              BIC is 2.505951
+# Second model: AIC is 9.69619
+#               BIC is 7.101071
 
-# We should prefer the second model.(??????)
+# We should prefer the second model, which has consistently higher AIC and BIC.
 
 #### BONUS...
 # If you complete this part I'll refund you a late day. You do not need to do this.
