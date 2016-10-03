@@ -55,6 +55,9 @@ exemplar.memory.limited <- function(training.data, x.val, y.val, target.category
   training.data$mem.sims <- training.data$similarities * training.data$weight
   
   pr.correct <- sum(subset(training.data, category==target.category)$mem.sims) / sum(training.data$mem.sims)
+  if(pr.correct==0){
+    pr.correct <- 0.000000000001
+  }
   
   return(pr.correct)
 }
@@ -98,9 +101,6 @@ exemplar.memory.log.likelihood <- function(all.data, sensitivity, decay.rate){
       train <- all.data[0:(i-1),]
       test <- all.data[i,]
       all.data$prob <- exemplar.memory.limited(train, test$x, test$y, test$correct, sensitivity, decay.rate)
-      if(all.data$prob==0){
-        all.data$prob <- 0.000000000001
-      }
     }
   }
   
@@ -111,5 +111,5 @@ exemplar.memory.log.likelihood <- function(all.data, sensitivity, decay.rate){
   
   log.likelihood <- sum(log(all.data$likelihood))
   
-  return(log.likelihood)
+  return(-log.likelihood)
 }
